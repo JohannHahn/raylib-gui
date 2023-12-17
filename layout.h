@@ -8,13 +8,14 @@ enum layout_type {
 
 class Layout {
 public:
-    Layout(Rectangle boundary, int type, int slot_count);
-    Layout(int x, int y, int width, int height, int type, int slot_count);
+    Layout(Rectangle boundary, int type, int slot_count) : boundary(boundary), type((layout_type)type), slot_count(slot_count){};
+    Layout(float x, float y, float width, float height, int type, int slot_count) {Layout({x, y, width, height}, type, slot_count);};
     int get_slot_count();
-    int get_item_count();
+    bool is_occupied(int slot);
+    Rectangle next_slot();
 private:
     Rectangle boundary; 
     layout_type type;
     int slot_count;
-    int items;
+    int current_slot = 0;
 };

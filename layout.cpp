@@ -1,5 +1,4 @@
 #include "layout.h"
-#include <assert.h>
 
 Rectangle Layout::next_slot() {
     Rectangle slot;
@@ -21,5 +20,29 @@ Rectangle Layout::next_slot() {
 	break;
     }
     current_slot++;
+    current_slot %= slot_count;
+    return slot;
+}
+
+Rectangle Layout::get_slot(int slot_index) {
+    slot_index %= slot_count;
+    Rectangle slot;
+    switch (type) {
+    case VERTICAL:
+	slot.x = boundary.x;
+	slot.y = (boundary.height / (float)slot_count) * (float)slot_index;
+	slot.width = boundary.width;
+	slot.height = boundary.height / (float)slot_count;
+	break;
+    case HORIZONTAL:
+	slot.x = boundary.width / (float)slot_count * (float)slot_index;
+	slot.y = boundary.y;
+	slot.width = boundary.width / (float)slot_count;
+	slot.height = boundary.height;
+	break;
+    case LAYOUT_TYPE_MAX:
+	assert(false && "unreachable");
+	break;
+    }
     return slot;
 }

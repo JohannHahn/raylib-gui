@@ -1,6 +1,8 @@
 #pragma once
 
 #include "raylib/src/raylib.h"
+#include <iostream>
+#include <assert.h>
 
 enum layout_type {
     VERTICAL, HORIZONTAL, LAYOUT_TYPE_MAX
@@ -13,6 +15,8 @@ public:
     int get_slot_count();
     bool is_occupied(int slot);
     Rectangle next_slot();
+    // slot gets clamped to 0 - slot_count
+    Rectangle get_slot(int slot);
 private:
     Rectangle boundary; 
     layout_type type;

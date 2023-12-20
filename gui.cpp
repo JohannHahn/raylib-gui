@@ -21,8 +21,7 @@ bool Gui::Button(Rectangle rec, float spacing, const char* label) {
 
     DrawRectangleRec(rec, GRAY);
     DrawRectangleLinesEx(rec, line_thicc, DARKGRAY);
-    DrawText(label, text_rec.x, text_rec.y, font_size, BLACK);
-
+    DrawText(label, text_rec.x - font_size / 2.f, text_rec.y, font_size, BLACK);
 
     return released;
 }
@@ -32,20 +31,20 @@ bool Gui::Slider(Rectangle rec, float min, float max, float& current, const char
     line_rec.height /= 5.f;
     center_rec(rec, line_rec);
     float circle_rad = line_rec.height / 2.f;
-    current /= max;
-    Vector2 circle = {line_rec.x + current, line_rec.y + line_rec.height / 2.f};
+    Vector2 circle = {line_rec.x + current * line_rec.width, line_rec.y + line_rec.height / 2.f};
     Vector2 mouse_pos = GetMousePosition();
     bool hovered = CheckCollisionPointRec(mouse_pos, line_rec);
     bool clicked = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
 
     if(hovered && clicked) {
-	current = (mouse_pos.x - line_rec.x) / max;
+	current = ((mouse_pos.x - line_rec.x) / line_rec.width) * max + min;
 	if(current > line_rec.width) current = line_rec.width;
 	else if(current < 0) current = 0;
-	circle.x = line_rec.x + current;
+	circle.x = line_rec.x + current * line_rec.width;
     }
 
     DrawRectangleRec(line_rec, GRAY);
-    DrawCircle(circle.x, circle.y, circle_rad, RAYWHITE);
+    DrawCircle(circle.x, circle.y, circle_rad, BLACK);
+
     return hovered && clicked; 
 }

@@ -9,8 +9,8 @@ Rectangle main_window_boundary = {0, 0, window_width - controls_width, window_he
 Rectangle controls_boundary = {window_width - controls_width, 0, controls_width, window_height};
 Layout control_layout = Layout(controls_boundary, VERTICAL, 5);
 
-
 int main() {
+    control_layout.set_spacing(50);
     InitWindow(900, 600, "TEST");
     while(!WindowShouldClose()) {
 	ClearBackground(YELLOW);

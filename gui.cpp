@@ -1,7 +1,13 @@
 #include "gui.h"
 
+void Gui::center_rec(const Rectangle& boundary, Rectangle& to_center) {
+    assert(boundary.width >= to_center.width && boundary.height >= to_center.height && "can't center with smaller boundary");
+    to_center.x = boundary.x + boundary.width / 2.f - to_center.width / 2.f;
+    to_center.y = boundary.y + boundary.height / 2.f - to_center.height / 2.f;
+}
 
 bool Gui::Button(Rectangle rec, float spacing, const char* label) {
+    Rectangle text_rec;
     Vector2 mouse_pos = GetMousePosition();
     float line_thicc = (rec.width + rec.height) * 0.025f;
     float font_size = (rec.height - line_thicc) / (float)strlen(label) * 2.5f;

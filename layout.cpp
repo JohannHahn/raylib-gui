@@ -1,29 +1,5 @@
 #include "layout.h"
 
-Rectangle Layout::next_slot() {
-    Rectangle slot;
-    switch (type) {
-    case VERTICAL:
-	slot.x = boundary.x;
-	slot.y = boundary.y / (float)slot_count * (float)current_slot;
-	slot.width = boundary.width;
-	slot.height = boundary.height / (float)slot_count;
-	break;
-    case HORIZONTAL:
-	slot.x = boundary.x / (float)slot_count * (float)current_slot;
-	slot.y = boundary.y;
-	slot.width = boundary.width / (float)slot_count;
-	slot.height = boundary.height;
-	break;
-    case LAYOUT_TYPE_MAX:
-	assert(false && "unreachable");
-	break;
-    }
-    current_slot++;
-    current_slot %= slot_count;
-    return slot;
-}
-
 Rectangle Layout::get_slot(int slot_index) {
     slot_index %= slot_count;
     Rectangle slot;
@@ -44,5 +20,23 @@ Rectangle Layout::get_slot(int slot_index) {
 	assert(false && "unreachable");
 	break;
     }
+    Rectangle slot_nospace = slot;
+    slot.width -= spacing * 2.f;
+    slot.height -= spacing * 2.f;
+    center_rec(slot_nospace, slot);
     return slot;
+}
+
+void Layout::center_rec(const Rectangle& boundary, Rectangle& to_center) {
+    assert(boundary.width >= to_center.width && boundary.height >= to_center.height && "can't center with smaller boundary");
+    to_center.x = boundary.x + boundary.width / 2.f - to_center.width / 2.f;
+    to_center.y = boundary.y + boundary.height / 2.f - to_center.height / 2.f;
+}
+
+void Layout::set_spacing(float spacing) {
+    this->spacing = spacing;
+}
+
+int Layout::get_slot_count() {
+    return slot_count;
 }

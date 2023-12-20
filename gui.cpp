@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "raylib/src/raylib.h"
 
 void Gui::center_rec(const Rectangle& boundary, Rectangle& to_center) {
     assert(boundary.width >= to_center.width && boundary.height >= to_center.height && "can't center with smaller boundary");
@@ -11,16 +12,17 @@ bool Gui::Button(Rectangle rec, float spacing, const char* label) {
     Vector2 mouse_pos = GetMousePosition();
     float line_thicc = (rec.width + rec.height) * 0.025f;
     float font_size = (rec.height - line_thicc) / (float)strlen(label) * 2.5f;
-    Vector2 font_dims = MeasureTextEx(GetFontDefault(), label, font_size, 0.f);
     bool released = IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouse_pos, rec);
-    // center horizontally
-    float text_x = (rec.x + rec.width / 2.f) - font_dims.x / 1.9f;
-    // center vertically 
-    float text_y = (rec.y + rec.height / 2.f) - font_dims.y / 2.f;
+    Vector2 font_dims = MeasureTextEx(GetFontDefault(), label, font_size, 0.f);
+
+    text_rec.height = font_dims.y;
+    text_rec.width = font_dims.x;
+    center_rec(rec, text_rec);
 
     DrawRectangleRec(rec, GRAY);
-    DrawRectangleLinesEx(rec, line_thicc, WHITE);
-    DrawText(label, text_x, text_y, font_size, BLACK);
+    DrawRectangleLinesEx(rec, line_thicc, DARKGRAY);
+    DrawText(label, text_rec.x, text_rec.y, font_size, BLACK);
+
 
     return released;
 }
@@ -28,8 +30,22 @@ bool Gui::Button(Rectangle rec, float spacing, const char* label) {
 bool Gui::Slider(Rectangle rec, float min, float max, float& current, const char* label) {
     Rectangle line_rec = rec;
     line_rec.height /= 5.f;
+    center_rec(rec, line_rec);
+    float circle_rad = line_rec.height / 2.f;
+    current /= max;
+    Vector2 circle = {line_rec.x + current, line_rec.y + line_rec.height / 2.f};
     Vector2 mouse_pos = GetMousePosition();
-    bool released = IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouse_pos, line_rec);
-    DrawRectangleRec(line_rec, WHITE);
-    return released; 
+    bool hovered = CheckCollisionPointRec(mouse_pos, line_rec);
+    bool clicked = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
+
+    if(hovered && clicked) {
+	current = (mouse_pos.x - line_rec.x) / max;
+	if(current > line_rec.width) current = line_rec.width;
+	else if(current < 0) current = 0;
+	circle.x = line_rec.x + current;
+    }
+
+    DrawRectangleRec(line_rec, GRAY);
+    DrawCircle(circle.x, circle.y, circle_rad, RAYWHITE);
+    return hovered && clicked; 
 }

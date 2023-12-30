@@ -13,11 +13,11 @@ void resize() {
     controls_width = window_width / 4.f;
     main_window_boundary = {0, 0, window_width - controls_width, window_height};
     controls_boundary = {window_width - controls_width, 0, controls_width, window_height};
-    control_layout = Layout(controls_boundary, VERTICAL, 5);
+    control_layout.resize(controls_boundary);
 }
 
 int main() {
-    control_layout.set_spacing(5);
+    control_layout.set_spacing(10);
     InitWindow(900, 600, "TEST");
     SetWindowState(FLAG_WINDOW_RESIZABLE);
     SetTraceLogLevel(LOG_ERROR | LOG_WARNING);
@@ -25,13 +25,16 @@ int main() {
     bool focused = false;
     std::string buffer;
     resize();
+    std::cout << "spacing = " << control_layout.get_spacing() << "\n";
     while(!WindowShouldClose()) {
 	if(IsWindowResized()) {
 	    resize();
 	}
 	ClearBackground(YELLOW);
-	if(GuiButton(control_layout.get_slot(0), "Button")) {
-	    std::cout << "button\n";
+	for(int slot = 0; slot < control_layout.get_slot_count(); ++slot) {
+	    if(GuiButton(control_layout.get_slot(slot), TextFormat("%d", slot))) {
+		std::cout << slot <<"\n";
+	    }
 	}
 	control_layout.draw();
 	EndDrawing();

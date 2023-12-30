@@ -1,7 +1,7 @@
 #define RAYGUI_IMPLEMENTATION
 #include "layout.h"
 
-Rectangle Layout::get_slot(int slot_index) {
+Rectangle Layout::get_slot(int slot_index, bool spaced) {
     slot_index %= slot_count;
     Rectangle slot;
     switch (type) {
@@ -21,11 +21,17 @@ Rectangle Layout::get_slot(int slot_index) {
 	assert(false && "unreachable");
 	break;
     }
-    Rectangle slot_nospace = slot;
-    slot.width -= spacing * 2.f;
-    slot.height -= spacing * 2.f;
-    center_rec(slot_nospace, slot);
+    if(spaced) {
+	Rectangle slot_nospace = slot;
+	slot.width -= spacing * 2.f;
+	slot.height -= spacing * 2.f;
+	center_rec(slot_nospace, slot);
+    }
     return slot;
+}
+
+void Layout::resize(Rectangle boundary) {
+    this->boundary = boundary;
 }
 
 void Layout::center_rec(const Rectangle& boundary, Rectangle& to_center) {
@@ -37,6 +43,9 @@ void Layout::center_rec(const Rectangle& boundary, Rectangle& to_center) {
 void Layout::set_spacing(float spacing) {
     this->spacing = spacing;
 }
+float Layout::get_spacing() {
+    return spacing;
+}
 
 void Layout::print_rec(Rectangle rec) {
     std::cout << "rectangle: x = " << rec.x << ", y = " << rec.y 
@@ -45,7 +54,8 @@ void Layout::print_rec(Rectangle rec) {
 
 void Layout::draw() {
     for(int slot = 0; slot < slot_count; ++slot) {
-	GuiGroupBox(get_slot(slot), TextFormat("%d", slot));
+	//GuiGroupBox(get_slot(slot), "");
+	DrawRectangleLinesEx(get_slot(slot, false), 1, BLACK);
     }
 }
 

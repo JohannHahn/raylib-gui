@@ -14,11 +14,13 @@ public:
     Layout(float x, float y, float width, float height, int type, int slot_count) {Layout({x, y, width, height}, type, slot_count);};
     int get_slot_count();
     // slot gets clamped to 0 - slot_count
-    Rectangle get_slot(int slot);
+    Rectangle get_slot(int slot, bool spaced = true);
     static void center_rec(const Rectangle& boundary, Rectangle& to_center);
     static void print_rec(Rectangle rec);
     void set_spacing(float spacing);
     void draw();
+    void resize(Rectangle boundary);
+    float get_spacing();
 private:
     Rectangle boundary; 
     layout_type type;

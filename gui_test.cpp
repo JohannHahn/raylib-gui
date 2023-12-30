@@ -1,6 +1,4 @@
-#include <iostream>
 #include "layout.h"
-#include "gui.h"
 
 float window_width = 900;
 float window_height = 600;
@@ -22,19 +20,22 @@ int main() {
     control_layout.set_spacing(5);
     InitWindow(900, 600, "TEST");
     SetWindowState(FLAG_WINDOW_RESIZABLE);
+    SetTraceLogLevel(LOG_ERROR | LOG_WARNING);
     float value = 0;
+    bool focused = false;
+    std::string buffer;
+    resize();
     while(!WindowShouldClose()) {
-	resize();
+	if(IsWindowResized()) {
+	    resize();
+	}
 	ClearBackground(YELLOW);
-	BeginDrawing();
-	for(int i = 0; i < 4; ++i) {
-	    if(Gui::Button(control_layout.get_slot(i), 0.f, TextFormat("Button %d", i))) {
-		std::cout << "Hi i am button " << i << "\n";
-	    }
+	if(GuiButton(control_layout.get_slot(0), "Button")) {
+	    std::cout << "button\n";
 	}
-	if(Gui::Slider(control_layout.get_slot(4), 0, 1, value, "Slidör")) {
-	}
+	control_layout.draw();
 	EndDrawing();
+
     }
     CloseWindow();
     return 0;

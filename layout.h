@@ -1,11 +1,11 @@
 #pragma once
 
-#include "raylib/src/raylib.h"
+#include "raygui.h"
 #include <iostream>
 #include <assert.h>
 
 enum layout_type {
-    VERTICAL, HORIZONTAL, LAYOUT_TYPE_MAX
+    VERTICAL, HORIZONTAL, SLICE_VERT, SLICE_HOR, LAYOUT_TYPE_MAX
 };
 
 class Layout {
@@ -16,7 +16,9 @@ public:
     // slot gets clamped to 0 - slot_count
     Rectangle get_slot(int slot);
     static void center_rec(const Rectangle& boundary, Rectangle& to_center);
+    static void print_rec(Rectangle rec);
     void set_spacing(float spacing);
+    void draw();
 private:
     Rectangle boundary; 
     layout_type type;

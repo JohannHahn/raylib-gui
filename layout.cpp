@@ -1,3 +1,4 @@
+#define RAYGUI_IMPLEMENTATION
 #include "layout.h"
 
 Rectangle Layout::get_slot(int slot_index) {
@@ -35,6 +36,17 @@ void Layout::center_rec(const Rectangle& boundary, Rectangle& to_center) {
 
 void Layout::set_spacing(float spacing) {
     this->spacing = spacing;
+}
+
+void Layout::print_rec(Rectangle rec) {
+    std::cout << "rectangle: x = " << rec.x << ", y = " << rec.y 
+	<< ", width = " << rec.width << ", height = " << rec.height << "\n";
+}
+
+void Layout::draw() {
+    for(int slot = 0; slot < slot_count; ++slot) {
+	GuiGroupBox(get_slot(slot), TextFormat("%d", slot));
+    }
 }
 
 int Layout::get_slot_count() {

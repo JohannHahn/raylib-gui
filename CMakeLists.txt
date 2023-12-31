@@ -5,5 +5,5 @@ project(layout)
 add_subdirectory(raylib)
 add_executable(test gui_test.cpp layout.cpp)
 
-target_link_libraries(test PUBLIC raylib)
+target_link_libraries(test raylib)
 

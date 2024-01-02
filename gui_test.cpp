@@ -39,14 +39,15 @@ int main() {
 	}
 	ClearBackground(YELLOW);
 	for(int slot = 0; slot < control_layout.get_slot_count(); ++slot) {
-	    if(GuiButton(control_layout.get_slot(slot), TextFormat("%d", slot))) {
+	    Rectangle slot_rec = control_layout.get_slot(slot);
+	    //Layout::print_rec(slot_rec);
+	    if(GuiButton(slot_rec, TextFormat("%d", slot))) {
 		std::cout << slot <<"\n";
 	    }
 	}
 	if(abs(vec_size(GetMouseDelta())) > 0.1f) { 
 	    Rectangle new_boundary = Layout::resize_rec(control_layout.get_boundary(), 
 						 GetMouseX(), GetMouseY(), control_layout.get_type()); 
-	    Layout::print_rec(new_boundary);
 	    control_layout.resize(new_boundary);
 	}
 	control_layout.draw();

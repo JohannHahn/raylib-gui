@@ -17,7 +17,7 @@ public:
     Layout(float x, float y, float width, float height, int type, int slot_count) {Layout({x, y, width, height}, type, slot_count);};
     int get_slot_count();
     int get_type(){return type;}
-    // slot gets clamped to 0 - slot_count
+    Rectangle get_default_slot_rec(int layout_type, int index);
     Rectangle get_slot(int slot, bool spaced = true);
     Rectangle get_boundary();
     static void center_rec(const Rectangle& boundary, Rectangle& to_center);
@@ -29,6 +29,7 @@ public:
     float get_spacing();
     void precompute_slots();
     void resize_slots();
+    void controls();
 private:
     Rectangle boundary; 
     rec_list slot_list;

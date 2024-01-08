@@ -13,28 +13,31 @@ enum layout_type {
 class Layout {
 public:
     Layout(Rectangle boundary, int type, int slot_count) 
-    : boundary(boundary), type((layout_type)type), slot_count(slot_count){precompute_slots();};
+    : boundary(boundary), type((layout_type)type){precompute_slots(slot_count);};
     Layout(float x, float y, float width, float height, int type, int slot_count) {Layout({x, y, width, height}, type, slot_count);};
-    int get_slot_count();
+    Layout(Rectangle boundary, int type, float slice_ratio);
+    int get_slot_count() {return slot_list.size();};
     int get_type(){return type;}
-    Rectangle get_default_slot_rec(int layout_type, int index);
     Rectangle get_slot(int slot, bool spaced = true);
     Rectangle get_boundary();
     static void center_rec(const Rectangle& boundary, Rectangle& to_center);
     static void print_rec(Rectangle rec);
+    static void slice_rec(const Rectangle rec, float slice_ratio, int type, Rectangle& rec_out1, Rectangle& rec_out2);
     void set_spacing(float spacing);
     void draw();
-    void resize(Rectangle boundary);
+    void resize(Rectangle new_boundary);
+    void resize_from_point(Vector2 new_point);
     static Rectangle resize_rec(Rectangle rec, float new_x, float new_y, int type);
     float get_spacing();
-    void precompute_slots();
     void resize_slots();
     void controls();
 private:
     Rectangle boundary; 
     rec_list slot_list;
     layout_type type;
-    int slot_count;
-    int current_slot = 0;
+    //int current_slot = 0;
     float spacing = 0.f;
+    float slice_ratio = 0.f;
+    void precompute_slots(int slot_count);
+    Rectangle get_default_slot_rec(int layout_type, int index, int slot_count);
 };

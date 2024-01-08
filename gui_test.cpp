@@ -7,8 +7,7 @@ float window_height = 600;
 float controls_width = window_width / 4.f;
 Rectangle main_window_boundary = {0, 0, window_width - controls_width, window_height};
 Rectangle controls_boundary = {window_width - controls_width, 0, controls_width, window_height};
-Layout control_layout = Layout(controls_boundary, HORIZONTAL, 5);
-
+Layout control_layout = Layout(controls_boundary, SLICE_HOR, 0.1f);
 
 void resize() {
     window_width = GetScreenWidth();
@@ -40,15 +39,10 @@ int main() {
 	ClearBackground(YELLOW);
 	for(int slot = 0; slot < control_layout.get_slot_count(); ++slot) {
 	    Rectangle slot_rec = control_layout.get_slot(slot);
-	    //Layout::print_rec(slot_rec);
+	    Layout::print_rec(slot_rec);
 	    if(GuiButton(slot_rec, TextFormat("%d", slot))) {
 		std::cout << slot <<"\n";
 	    }
-	}
-	if(abs(vec_size(GetMouseDelta())) > 0.1f) { 
-	    Rectangle new_boundary = Layout::resize_rec(control_layout.get_boundary(), 
-						 GetMouseX(), GetMouseY(), control_layout.get_type()); 
-	    control_layout.resize(new_boundary);
 	}
 	control_layout.draw();
 	EndDrawing();

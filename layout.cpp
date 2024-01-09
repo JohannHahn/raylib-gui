@@ -1,14 +1,11 @@
 #define RAYGUI_IMPLEMENTATION
 #include "layout.h"
 
-Layout::Layout(Rectangle boundary, int type, float slice_ratio) 
-    :boundary(boundary), type((layout_type)type), slice_ratio(slice_ratio) {
+Layout::Layout(Rectangle boundary, int type, float slice_ratio, float spacing) 
+    :boundary(boundary), type((layout_type)type), slice_ratio(slice_ratio), spacing(spacing) {
     assert(type > HORIZONTAL && "this constructor is for slice types");
     Rectangle rec1, rec2;
     slice_rec(boundary, slice_ratio, type, rec1, rec2);
-    print_rec(boundary);
-    print_rec(rec1);
-    print_rec(rec2);
     slot_list.push_back(rec1);
     slot_list.push_back(rec2);
 }

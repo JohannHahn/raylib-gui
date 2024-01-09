@@ -12,10 +12,10 @@ enum layout_type {
 
 class Layout {
 public:
-    Layout(Rectangle boundary, int type, int slot_count) 
-    : boundary(boundary), type((layout_type)type){precompute_slots(slot_count);};
-    Layout(float x, float y, float width, float height, int type, int slot_count) {Layout({x, y, width, height}, type, slot_count);};
-    Layout(Rectangle boundary, int type, float slice_ratio);
+    Layout(Rectangle boundary, int type, int slot_count, float spacing = 0.f) 
+    : boundary(boundary), type((layout_type)type), spacing(spacing){precompute_slots(slot_count);};
+    Layout(float x, float y, float width, float height, int type, int slot_count, float spacing = 0.f) {Layout({x, y, width, height}, type, slot_count, spacing);};
+    Layout(Rectangle boundary, int type, float slice_ratio, float spacing = 0.f);
     int get_slot_count() {return slot_list.size();};
     int get_type(){return type;}
     Rectangle get_slot(int slot, bool spaced = true);

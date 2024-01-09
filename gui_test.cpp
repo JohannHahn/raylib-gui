@@ -1,6 +1,7 @@
 #include <math.h>
 #include "layout.h"
 #include "raylib/src/raylib.h"
+#include "gui.h"
 
 float window_width = 900;
 float window_height = 600;
@@ -37,14 +38,7 @@ int main() {
 	    resize();
 	}
 	ClearBackground(YELLOW);
-	for(int slot = 0; slot < control_layout.get_slot_count(); ++slot) {
-	    Rectangle slot_rec = control_layout.get_slot(slot);
-	    Layout::print_rec(slot_rec);
-	    if(GuiButton(slot_rec, TextFormat("%d", slot))) {
-		std::cout << slot <<"\n";
-	    }
-	}
-	control_layout.draw();
+	Gui::table(main_window_boundary, 5, 5);
 	EndDrawing();
 
     }

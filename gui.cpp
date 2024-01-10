@@ -1,7 +1,19 @@
 #include "gui.h"
 #include "raylib/src/raylib.h"
 
-void Gui::table(Rectangle boundary, int num_rows, int num_cols, float spacing) {
+const char* read_word(const char* words, int word) {
+    int cursor = 0;
+    int word_found = 0;
+    while(word_found < word) {
+	if(words[cursor] == '\0') {
+	    word_found++;
+	}
+	cursor++;
+    } 
+    return words + cursor;
+}
+void Gui::table(Rectangle boundary, int num_rows, int num_cols, 
+		const char* header_values, const char* body_values, float spacing) {
     Layout table_layout = Layout(boundary, SLICE_VERT, 0.1f, spacing);
     Layout header = Layout(table_layout.get_slot(0), HORIZONTAL, num_cols, spacing);
     Layout row_layout = Layout(table_layout.get_slot(1), VERTICAL, num_rows, spacing);
@@ -9,14 +21,15 @@ void Gui::table(Rectangle boundary, int num_rows, int num_cols, float spacing) {
     for(int i = 0; i < num_cols; ++i) {
 	Rectangle slot = header.get_slot(i);
 	DrawRectangleRec(slot, header_background_col);
-	GuiTextBox(slot, (char*)TextFormat("%d", i), (int)(header.get_boundary().height), false);	
+	GuiTextBox(slot, (char*)read_word(header_values, i), (int)(header.get_boundary().height), false);	
     }
     for(int i = 0; i < num_rows; ++i) {
 	Layout single_row = Layout(row_layout.get_slot(i), HORIZONTAL, num_cols);
 	for(int j = 0; j < num_cols; ++j) {
-	    GuiTextBox(single_row.get_slot(j), (char*)TextFormat("%d", i*j), (int)(single_row.get_boundary().height), false);	
+	    GuiTextBox(single_row.get_slot(j), (char*)read_word(body_values, j + i * num_cols), 
+		    (int)(single_row.get_boundary().height), false);	
 	}
     }
-    header.draw();
-    row_layout.draw();
+    //header.draw();
+    //row_layout.draw();
 }

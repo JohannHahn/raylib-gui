@@ -9,6 +9,7 @@ float controls_width = window_width / 4.f;
 Rectangle main_window_boundary = {0, 0, window_width - controls_width, window_height};
 Rectangle controls_boundary = {window_width - controls_width, 0, controls_width, window_height};
 Layout control_layout = Layout(controls_boundary, SLICE_HOR, 0.1f);
+Color bg_col = Color{0x18, 0x18, 0x18, 0xff};
 
 void resize() {
     window_width = GetScreenWidth();
@@ -30,15 +31,15 @@ int main() {
     SetTraceLogLevel(LOG_ERROR | LOG_WARNING);
     float value = 0;
     bool focused = false;
-    std::string buffer;
+    const char* header = "one\0two\0three";
+    const char* body = "one\0two\0three\0four\0five\0six\0seven\0eight\0nine";
     resize();
-    std::cout << "spacing = " << control_layout.get_spacing() << "\n";
     while(!WindowShouldClose()) {
 	if(IsWindowResized()) {
 	    resize();
 	}
-	ClearBackground(YELLOW);
-	Gui::table(main_window_boundary, 5, 5);
+	ClearBackground(bg_col);
+	Gui::table(main_window_boundary, 3, 3, header, body); 
 	EndDrawing();
 
     }

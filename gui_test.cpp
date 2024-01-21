@@ -24,6 +24,11 @@ float vec_size(Vector2 vec) {
     return std::sqrt(vec.x * vec.x + vec.y * vec.y);
 }
 
+void on_click(void* data) {
+    const char* label = (const char*) data;
+    std::cout << "clicked button " << label << "\n";
+}
+
 int main() {
     control_layout.set_spacing(10);
     InitWindow(900, 600, "TEST");
@@ -39,7 +44,7 @@ int main() {
 	    resize();
 	}
 	ClearBackground(bg_col);
-	Gui::table(main_window_boundary, 3, 3, header, body); 
+	Gui::table(main_window_boundary, 3, 3, header, body, 0, on_click); 
 	EndDrawing();
 
     }

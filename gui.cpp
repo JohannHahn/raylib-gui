@@ -44,3 +44,9 @@ void Gui::table(Rectangle boundary, int num_rows, int num_cols,
     //header.draw();
     row_layout.draw();
 }
+
+bool Gui::tree_node(Rectangle boundary, const char *label, bool* open) {
+    bool clicked = false;
+    GuiToggle(boundary, label, open);
+    return clicked;
+}

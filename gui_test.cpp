@@ -8,7 +8,7 @@ float window_height = 600;
 float controls_width = window_width / 4.f;
 Rectangle main_window_boundary = {0, 0, window_width - controls_width, window_height};
 Rectangle controls_boundary = {window_width - controls_width, 0, controls_width, window_height};
-Layout control_layout = Layout(controls_boundary, SLICE_HOR, 0.1f);
+Layout control_layout = Layout(controls_boundary, VERTICAL, 10);
 Color bg_col = Color{0x18, 0x18, 0x18, 0xff};
 
 void resize() {
@@ -30,7 +30,7 @@ void on_click(void* data) {
 }
 
 int main() {
-    control_layout.set_spacing(10);
+    //control_layout.set_spacing(10);
     InitWindow(900, 600, "TEST");
     SetWindowState(FLAG_WINDOW_RESIZABLE);
     SetTraceLogLevel(LOG_ERROR | LOG_WARNING);
@@ -39,12 +39,14 @@ int main() {
     const char* header = "one\0two\0three";
     const char* body = "one\0two\0three\0four\0five\0six\0seven\0eight\0nine";
     resize();
+    bool open = false;
     while(!WindowShouldClose()) {
 	if(IsWindowResized()) {
 	    resize();
 	}
 	ClearBackground(bg_col);
 	Gui::table(main_window_boundary, 3, 3, header, body, 0, on_click); 
+	Gui::tree_node(control_layout.get_slot(0), "root", &open);
 	EndDrawing();
 
     }

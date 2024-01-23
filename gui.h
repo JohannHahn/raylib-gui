@@ -5,7 +5,7 @@ namespace Gui {
     struct Tree {
 
     };
-    void table(Rectangle boundary, int num_rows, int num_cols, 
-               const char* header_values, const char* body_values, float spacing = 0.f, void(*on_click)(void* data) = NULL); 
+    void table(Rectangle boundary, int num_cols, int num_rows, 
+               const char* header_values, const char* body_values, void(*on_click)(void* data) = NULL); 
     bool tree_node(Rectangle boundary, const char* label, bool* open);
 }

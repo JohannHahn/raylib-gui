@@ -6,6 +6,12 @@
 #include <vector> 
 
 typedef std::vector<Rectangle> rec_list;
+template <class T> 
+struct list {
+    T* data;
+    size_t size;
+    size_t capacity;
+};
 enum layout_type {
     VERTICAL, HORIZONTAL, SLICE_VERT, SLICE_HOR, LAYOUT_TYPE_MAX
 };

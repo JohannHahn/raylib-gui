@@ -40,6 +40,14 @@ int main() {
     const char* body = "one\0two\0three\0four\0five\0six\0seven\0eight\0nine";
     resize();
     bool open = false;
+    const size_t amount = 5;
+    list<Rectangle> a = {0};
+    a.data = (Rectangle*)malloc(sizeof(Rectangle) * amount);
+    a.capacity = 5;
+    a.data[0] = Rectangle{0.f, 1.f, 1.f ,1.f};
+    for(int i = 0; i < amount; ++i) {
+	a.data[i] = Rectangle{i + 10.f, i * 10.f, i * 10.f , 10.f};
+    }
     while(!WindowShouldClose()) {
 	if(IsWindowResized()) {
 	    resize();
@@ -47,6 +55,9 @@ int main() {
 	ClearBackground(bg_col);
 	Gui::table(main_window_boundary, 3, 3, header, body, 0, on_click); 
 	Gui::tree_node(control_layout.get_slot(0), "root", &open);
+	for(int i = 0; i < amount; ++i) {
+	    DrawRectangleRec((a.data[i]), GREEN);
+	}
 	EndDrawing();
 
     }

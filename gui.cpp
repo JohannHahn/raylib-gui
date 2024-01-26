@@ -1,6 +1,9 @@
 #include "gui.h"
 #include "raylib/src/raylib.h"
 
+Gui::Node tree;
+Gui::Node* tree_head;
+
 const char* read_word(const char* words, int word) {
     int cursor = 0;
     int word_found = 0;
@@ -12,6 +15,7 @@ const char* read_word(const char* words, int word) {
     } 
     return words + cursor;
 }
+
 void Gui::table(Rectangle boundary, int num_cols, int num_rows, 
 		const char* header_values, const char* body_values, void(*on_click)(void* data)) {
     Layout table_layout = Layout(boundary, SLICE_VERT, 0.1f);
@@ -45,13 +49,43 @@ void Gui::table(Rectangle boundary, int num_cols, int num_rows,
     row_layout.draw();
 }
 
-bool Gui::tree_node(Rectangle boundary, const char *label, bool* open) {
-    bool clicked = false;
-    const char* toggle_label = *open ? "^" : ">";
-    Layout node_layout = Layout(boundary, SLICE_HOR, 0.1f);
-    if(GuiToggle(node_layout.get_slot(0), toggle_label, open)) {
-	std::cout << "toggle open\n";
-    }
-    GuiButton(node_layout.get_slot(1), label);
-    return clicked;
+void Gui::begin_tree() {
+    tree_head = &tree; 
 }
+
+void Gui::end_tree() {
+    draw_tree(&tree);
+    tree.children.clear();
+}
+
+Rectangle scale_node_boundary(Rectangle boundary, int depth) {
+    if(depth == 0) return boundary;
+    float scale_factor = 0.75f / (float)depth;
+    float new_width = boundary.width * scale_factor;
+    float new_x = boundary.x + boundary.width - new_width; 
+    Rectangle bs = boundary;
+    bs.x = new_x; bs.width = new_width;
+    return bs;
+}
+
+void Gui::draw_tree(Node* head, int depth) {
+    if(!head) return;
+    for(Node n : head->children) {
+	n.boundary = scale_node_boundary(n.boundary, depth);
+	const char* toggle_label = *n.open ? "^" : ">";
+	Layout node_layout = Layout(n.boundary, SLICE_HOR, 0.1f);
+	GuiToggle(node_layout.get_slot(0), toggle_label, n.open);
+	if(GuiButton(node_layout.get_slot(1), n.label)) {
+	    std::cout << n.label << "\n";
+	}
+	draw_tree(&n, depth + 1);
+    }
+}
+
+void Gui::tree_node(Rectangle boundary, const char *label, bool* open) {
+    Node node = {.open = open, .boundary = boundary, .label = label};
+    tree_head->children.push_back(node);
+    tree_head = &tree_head->children[tree_head->children.size() - 1];
+}
+
+

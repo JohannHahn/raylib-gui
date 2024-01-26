@@ -47,6 +47,11 @@ void Gui::table(Rectangle boundary, int num_cols, int num_rows,
 
 bool Gui::tree_node(Rectangle boundary, const char *label, bool* open) {
     bool clicked = false;
-    GuiToggle(boundary, label, open);
+    const char* toggle_label = *open ? "^" : ">";
+    Layout node_layout = Layout(boundary, SLICE_HOR, 0.1f);
+    if(GuiToggle(node_layout.get_slot(0), toggle_label, open)) {
+	std::cout << "toggle open\n";
+    }
+    GuiButton(node_layout.get_slot(1), label);
     return clicked;
 }

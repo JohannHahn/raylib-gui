@@ -9,6 +9,8 @@ Layout tree_layout = Layout({0}, VERTICAL, 0);
 std::vector<Rectangle> tree_stack;
 std::unordered_map<std::string, bool> tree_state;
 int tree_node_count = 0;
+float tree_toggle_scale_factor = 0.9f;
+
 
 bool contains(const std::unordered_map<std::string, bool>& map, const char* key) {
     for(std::pair<std::string, bool> pair : map) {
@@ -63,7 +65,7 @@ void Gui::table(Rectangle boundary, int num_cols, int num_rows,
 }
 
 void Gui::begin_tree(Rectangle boundary) {
-    tree_layout = Layout(boundary, VERTICAL, 10);
+    tree_layout = Layout(boundary, VERTICAL, 20);
     tree_stack.push_back({0});
     tree_node_count = 0;
 }
@@ -75,8 +77,7 @@ void Gui::end_tree() {
 
 Rectangle scale_node_boundary(Rectangle parent_boundary) {
     if(parent_boundary.width == 0) return tree_layout.get_slot(0);
-    float scale_factor = 0.9f;
-    float new_width = parent_boundary.width * scale_factor;
+    float new_width = parent_boundary.width * tree_toggle_scale_factor;
     float new_x = parent_boundary.x + parent_boundary.width - new_width; 
     parent_boundary.x = new_x; parent_boundary.width = new_width;
     parent_boundary.y = parent_boundary.height * (tree_node_count - 1);
@@ -84,20 +85,21 @@ Rectangle scale_node_boundary(Rectangle parent_boundary) {
 }
 
 void Gui::tree_push(const char* label) {
-    tree_state[label] = false;
-}
-void Gui::tree_pop() {
-    tree_stack.pop_back();
-}
-bool Gui::tree_node(const char *label) {
     tree_node_count++;
     if(!contains(tree_state, label)) {
 	tree_state[label] = false;
     }
+}
+
+void Gui::tree_pop() {
+    tree_stack.pop_back();
+}
+bool Gui::tree_node(const char *label) {
+    tree_push(label);
 
     Rectangle parent_boundary = tree_stack[tree_stack.size() - 1];
     Rectangle boundary = scale_node_boundary(parent_boundary);
-    Layout node_layout = Layout(boundary, SLICE_HOR, 0.1f);
+    Layout node_layout = Layout(boundary, SLICE_HOR, 1.f - tree_toggle_scale_factor);
     bool open = tree_state[label];
     const char* toggle_label = open ? "^" : ">";
 
@@ -106,6 +108,15 @@ bool Gui::tree_node(const char *label) {
 
     if(GuiButton(node_layout.get_slot(1), label)) {
 	std::cout << label << "\n";
+    }
+
+    Vector2 horizontal_line_start = {boundary.x, boundary.y + boundary.height/2.f};
+    Vector2 vertical_line_start = {parent_boundary.x + parent_boundary.width * (1.f - tree_toggle_scale_factor) / 2.f, horizontal_line_start.y};
+    Vector2 vertical_line_end = {vertical_line_start.x, parent_boundary.y + parent_boundary.height};
+    if(parent_boundary.width > 0) {
+	Layout::print_rec(Rectangle{horizontal_line_start.x, horizontal_line_start.y, vertical_line_start.x, vertical_line_start.y});
+	DrawLineV(horizontal_line_start, vertical_line_start, DARKGRAY);
+	DrawLineV(vertical_line_start, vertical_line_end, DARKGRAY);
     }
 
     tree_stack.push_back(boundary);

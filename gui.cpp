@@ -1,10 +1,23 @@
 #include "gui.h"
+#include "../data_base.h"
+#include <unordered_map>
 #include "raylib/src/raylib.h"
 
 Gui::Node tree;
 Gui::Node* tree_head;
+Layout tree_layout = Layout({0}, VERTICAL, 0);
+std::vector<Rectangle> tree_stack;
+std::unordered_map<std::string, bool> tree_state;
+int tree_node_count = 0;
 
-const char* read_word(const char* words, int word) {
+bool contains(const std::unordered_map<std::string, bool>& map, const char* key) {
+    for(std::pair<std::string, bool> pair : map) {
+	if(pair.first == key) return true;
+    }
+    return false;
+}
+
+const char* Gui::read_word(const char* words, int word) {
     int cursor = 0;
     int word_found = 0;
     while(word_found < word) {
@@ -49,43 +62,54 @@ void Gui::table(Rectangle boundary, int num_cols, int num_rows,
     row_layout.draw();
 }
 
-void Gui::begin_tree() {
-    tree_head = &tree; 
+void Gui::begin_tree(Rectangle boundary) {
+    tree_layout = Layout(boundary, VERTICAL, 10);
+    tree_stack.push_back({0});
+    tree_node_count = 0;
 }
 
 void Gui::end_tree() {
-    draw_tree(&tree);
-    tree.children.clear();
+    tree_stack.clear();
 }
 
-Rectangle scale_node_boundary(Rectangle boundary, int depth) {
-    if(depth == 0) return boundary;
-    float scale_factor = 0.75f / (float)depth;
-    float new_width = boundary.width * scale_factor;
-    float new_x = boundary.x + boundary.width - new_width; 
-    Rectangle bs = boundary;
-    bs.x = new_x; bs.width = new_width;
-    return bs;
+
+Rectangle scale_node_boundary(Rectangle parent_boundary) {
+    if(parent_boundary.width == 0) return tree_layout.get_slot(0);
+    float scale_factor = 0.9f;
+    float new_width = parent_boundary.width * scale_factor;
+    float new_x = parent_boundary.x + parent_boundary.width - new_width; 
+    parent_boundary.x = new_x; parent_boundary.width = new_width;
+    parent_boundary.y = parent_boundary.height * (tree_node_count - 1);
+    return parent_boundary;
 }
 
-void Gui::draw_tree(Node* head, int depth) {
-    if(!head) return;
-    for(Node n : head->children) {
-	n.boundary = scale_node_boundary(n.boundary, depth);
-	const char* toggle_label = *n.open ? "^" : ">";
-	Layout node_layout = Layout(n.boundary, SLICE_HOR, 0.1f);
-	GuiToggle(node_layout.get_slot(0), toggle_label, n.open);
-	if(GuiButton(node_layout.get_slot(1), n.label)) {
-	    std::cout << n.label << "\n";
-	}
-	draw_tree(&n, depth + 1);
+void Gui::tree_push(const char* label) {
+    tree_state[label] = false;
+}
+void Gui::tree_pop() {
+    tree_stack.pop_back();
+}
+bool Gui::tree_node(const char *label) {
+    tree_node_count++;
+    if(!contains(tree_state, label)) {
+	tree_state[label] = false;
     }
-}
 
-void Gui::tree_node(Rectangle boundary, const char *label, bool* open) {
-    Node node = {.open = open, .boundary = boundary, .label = label};
-    tree_head->children.push_back(node);
-    tree_head = &tree_head->children[tree_head->children.size() - 1];
+    Rectangle parent_boundary = tree_stack[tree_stack.size() - 1];
+    Rectangle boundary = scale_node_boundary(parent_boundary);
+    Layout node_layout = Layout(boundary, SLICE_HOR, 0.1f);
+    bool open = tree_state[label];
+    const char* toggle_label = open ? "^" : ">";
+
+    GuiToggle(node_layout.get_slot(0), toggle_label, &open);
+    tree_state[label] = open;
+
+    if(GuiButton(node_layout.get_slot(1), label)) {
+	std::cout << label << "\n";
+    }
+
+    tree_stack.push_back(boundary);
+    return open;
 }
 
 

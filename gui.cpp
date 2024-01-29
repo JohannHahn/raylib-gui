@@ -36,7 +36,7 @@ void Gui::table(Rectangle boundary, int num_cols, int num_rows,
     Layout table_layout = Layout(boundary, SLICE_VERT, 0.1f);
     Layout header = Layout(table_layout.get_slot(0), HORIZONTAL, num_cols);
     Layout row_layout = Layout(table_layout.get_slot(1), VERTICAL, num_rows);
-    Color header_background_col = ColorAlpha(GRAY, 0.5f);
+    Color header_background_col = ColorAlpha(GRAY, 0.3f);
 
     for(int i = 0; i < num_cols; ++i) {
 	Rectangle slot = header.get_slot(i);
@@ -84,18 +84,18 @@ Rectangle scale_node_boundary(Rectangle parent_boundary) {
     return parent_boundary;
 }
 
-void Gui::tree_push(const char* label) {
+void Gui::tree_push(const char* label, bool open) {
     tree_node_count++;
     if(!contains(tree_state, label)) {
-	tree_state[label] = false;
+	tree_state[label] = open;
     }
 }
 
 void Gui::tree_pop() {
     tree_stack.pop_back();
 }
-bool Gui::tree_node(const char *label) {
-    tree_push(label);
+bool Gui::tree_node(const char *label, bool default_open, bool* button_click) {
+    tree_push(label, default_open);
 
     Rectangle parent_boundary = tree_stack[tree_stack.size() - 1];
     Rectangle boundary = scale_node_boundary(parent_boundary);
@@ -107,14 +107,15 @@ bool Gui::tree_node(const char *label) {
     tree_state[label] = open;
 
     if(GuiButton(node_layout.get_slot(1), label)) {
-	std::cout << label << "\n";
+	if(button_click) {
+	    *button_click = true;
+	}
     }
 
     Vector2 horizontal_line_start = {boundary.x, boundary.y + boundary.height/2.f};
     Vector2 vertical_line_start = {parent_boundary.x + parent_boundary.width * (1.f - tree_toggle_scale_factor) / 2.f, horizontal_line_start.y};
     Vector2 vertical_line_end = {vertical_line_start.x, parent_boundary.y + parent_boundary.height};
     if(parent_boundary.width > 0) {
-	Layout::print_rec(Rectangle{horizontal_line_start.x, horizontal_line_start.y, vertical_line_start.x, vertical_line_start.y});
 	DrawLineV(horizontal_line_start, vertical_line_start, DARKGRAY);
 	DrawLineV(vertical_line_start, vertical_line_end, DARKGRAY);
     }

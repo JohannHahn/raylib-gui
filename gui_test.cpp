@@ -1,6 +1,5 @@
 #include <math.h>
-#include "layout.h"
-#include "raylib/src/raylib.h"
+#define GUI_IMPLEMENTATION
 #include "gui.h"
 
 float window_width = 900;
@@ -30,34 +29,25 @@ void on_click(void* data) {
 }
 
 int main() {
-    //control_layout.set_spacing(10);
+    control_layout.set_spacing(10);
     InitWindow(900, 600, "TEST");
     SetWindowState(FLAG_WINDOW_RESIZABLE);
     SetTraceLogLevel(LOG_ERROR | LOG_WARNING);
-    float value = 0;
-    bool focused = false;
     const char* header = "one\0two\0three";
     const char* body = "one\0two\0three\0four\0five\0six\0seven\0eight\0nine";
     resize();
-    bool open = false;
-    const size_t amount = 5;
-    list<Rectangle> a = {0};
-    a.data = (Rectangle*)malloc(sizeof(Rectangle) * amount);
-    a.capacity = 5;
-    a.data[0] = Rectangle{0.f, 1.f, 1.f ,1.f};
-    for(int i = 0; i < amount; ++i) {
-	a.data[i] = Rectangle{i + 10.f, i * 10.f, i * 10.f , 10.f};
-    }
     while(!WindowShouldClose()) {
 	if(IsWindowResized()) {
 	    resize();
 	}
 	ClearBackground(bg_col);
-	Gui::table(main_window_boundary, 3, 3, header, body, 0, on_click); 
-	Gui::tree_node(control_layout.get_slot(0), "root", &open);
-	for(int i = 0; i < amount; ++i) {
-	    DrawRectangleRec((a.data[i]), GREEN);
+	Gui::table(main_window_boundary, 3, 3, header, body, on_click); 
+	Gui::begin_tree(controls_boundary);
+	if(Gui::tree_node("tree node")) {
+	    Gui::tree_node("tree leaf");
+	    Gui::tree_pop();
 	}
+	Gui::end_tree();
 	EndDrawing();
 
     }
